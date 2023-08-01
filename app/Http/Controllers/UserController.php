@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -19,7 +20,7 @@ class UserController extends Controller
         $users = User::all();
 
 
-// dd(auth()->user());
+        // dd(auth()->user());
         if(auth()->user()){
             $users = User::where('id', '!=', auth()->user()->id)->get();
 
@@ -68,5 +69,36 @@ class UserController extends Controller
             'liked_id' => $liked_id
         ]);
 
+    }
+
+    public function profile(){
+        return view('profile', [
+            'user' => auth()->user()
+        ]);
+    }
+
+    public function editProfile(){
+        return view('edit-profile', [
+            'user' => auth()->user()
+        ]);
+    }
+
+    public function updateProfile(Request $request){
+        // dd($request);
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email:dns',
+            'image' => 'image|file'
+        ]);
+
+        if($request->file('image')){
+            Storage::delete($request->oldImage);
+            $data['image'] = $request->file('image')->store('users');
+        }
+
+        $user = User::find($request->user_id);
+        $user->update($data);
+
+        return redirect('/profile')->with('success', 'Profile updated successfully!');
     }
 }

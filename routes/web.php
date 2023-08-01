@@ -47,3 +47,7 @@ Route::post('/storeAvatar', [AvatarController::class, 'buy']);
 
 Route::post('/topup', [AvatarController::class, 'topup']);
 
+Route::get('/profile',[UserController::class, 'profile']);
+Route::get('/edit-profile',[UserController::class, 'editProfile']);
+Route::put('/edit-profile',[UserController::class, 'updateProfile']);
+
